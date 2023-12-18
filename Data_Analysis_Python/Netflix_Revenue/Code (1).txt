@@ -1,0 +1,123 @@
+#Import Libraries yang Diperlukan
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from warnings import filterwarnings
+
+filterwarnings('ignore')
+
+
+#Memuat Dataset Csv
+csv = pd.read_csv('/content/Netflix Revenue.csv')
+
+
+#Eksplorasi Dataset
+csv.head()
+csv.columns
+csv.shape
+
+
+#Cek ata yang Hilang atau Duplikasi
+csv.isna().sum()
+csv.duplicated()
+
+
+# Remove commas and convert 'Netflix Global Users' column to numeric
+csv['Netflix Global Users'] = csv['Netflix Global Users'].str.replace(',','').astype(float)
+
+# Extract the year from the 'Date' column
+csv['Year'] = pd.to_datetime(csv['Date']).dt.year
+
+
+#Cek perubahan panggil csv
+csv
+
+
+#Cek kesimpulan data
+csv.describe()
+
+
+#Pendapatan Global Netflix dari waktu ke waktu#
+
+# Convert the 'Date' column to datetime format
+csv['Date'] = pd.to_datetime(csv['Date'])
+
+
+# Sort the dataframe by date
+csv = csv.sort_values('Date')
+
+
+# Plot the revenue trends over time
+plt.figure(figsize=(10,5))
+plt.grid()
+plt.plot(csv['Date'], csv['Global Revenue'])
+plt.xlabel('Year', fontsize=12)
+plt.ylabel('Revenue', fontsize=12)
+plt.title('Global Revenue', fontsize=14)
+plt.xticks(rotation=35)
+
+# Modify the y-axis tick labels
+plt.gca().get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,.2f}".format(x)))
+
+
+#Rata-rata pengguna global netflix tiap tahun#
+
+# Group the data by year and calculate the average global users
+Average_Users = csv.groupby('Year')['Netflix Global Users'].mean()
+Average_Users
+
+
+# Plot the average global users over time
+plt.figure(figsize=(10,6))
+plt.grid()
+plt.plot(Average_Users.index, Average_Users.values)
+plt.title('Average Netflix Global Users by Year')
+plt.xlabel('Year')
+plt.ylabel('Average Global Users')
+plt.xticks(rotation=0)
+
+# Modify the y-axis tick labels
+plt.gca().get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,.2f}".format(x)))
+
+
+#Netflix Global Users Trend#
+
+# Sort the data by date
+csv.sort_values('Date')
+
+# Plot the global users trend over time
+plt.figure(figsize=(10,5))
+plt.grid(True)
+plt.plot(csv['Date'], csv['Netflix Global Users'])
+plt.title('Netflix Global Users Trend by Year', fontsize=14)
+plt.xlabel('Year', fontsize=10)
+plt.ylabel('Netflix Global Users', fontsize=10)
+plt.xticks(rotation=0)
+
+# Modify the y-axis tick labels
+plt.gca().get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,.2f}".format(x)))
+
+
+#Pendapatan berdasarkan wilayah#
+
+# Drop rows with missing values in the revenue columns
+csv_clean = csv.dropna(subset=['UACN Revenue', 'EMEA Revenue', 'LATM Revenue', 'APAC Revenue' ])
+ 
+# Calculate the sum of revenue by region
+revenue_by_region = csv_clean[['UACN Revenue', 'EMEA Revenue', 'LATM Revenue', 'APAC Revenue']].sum()
+
+revenue_by_region
+
+
+# Plot the bar chart of revenue by region
+plt.figure(figsize=(10, 5))
+revenue_by_region.plot(kind = 'bar', color='pink')
+plt.title('Revenue by Region', fontsize=16)
+plt.xlabel('Region', fontsize=12)
+plt.ylabel('Revenue', fontsize=12)
+plt.xticks(rotation=0)
+plt.grid(axis='y')
+
+# Modify the y-axis tick labels
+plt.gca().get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,.2f}".format(x)))
