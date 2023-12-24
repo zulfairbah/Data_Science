@@ -1,0 +1,59 @@
+SELECT MIN(population) AS min_pop,
+       MAX(population) AS max_pop,
+       MIN(population_growth) AS min_pop_growth,
+       MAX(population_growth) AS max_pop_growth
+  FROM project1.facts;
+
+
+SELECT * FROM project1.facts
+  WHERE population = (SELECT MIN(population) FROM project1.facts);
+
+
+SELECT * FROM project1.facts
+  WHERE population = (SELECT MAX(population) FROM project1.facts);
+
+
+SELECT AVG(population) AS avg population, 
+       AVG(area) AS avg_area
+  FROM project1.facts;
+
+
+SELECT name, population, area
+  FROM project1.facts
+WHERE population > (SELECT AVG(population)
+                      FROM project1.facts)
+      AND area < (SELECT AVG(area)
+                      FROM project1.facts)
+          ORDER BY 2 DESC;
+
+
+SELECT name, population, area
+  FROM project1.facts
+WHERE population > (SELECT AVG(population)
+                      FROM project1.facts);
+
+SELECT name, population, area
+  FROM project1.facts
+WHERE population > (SELECT AVG(population)
+                      FROM project1.facts)
+      AND area < (SELECT AVG(area)
+                      FROM project1.facts)
+          ORDER BY population DESC;
+
+
+SELECT name, population, area
+  FROM project1,facts
+WHERE population > (SELECT AVG(population)
+                        FROM project1.facts);
+
+
+SELECT name, birth_rate
+  FROM project1.facts
+    ORDER by 2 DESC
+    LIMIT 10;
+
+
+SELECT name, birth_rate
+  FROM project1.facts
+    ORDER by birth_rate
+    LIMIT 10;
